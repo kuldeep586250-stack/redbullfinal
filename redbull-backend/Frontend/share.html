@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Share - Redbull</title>
+
+  <style>
+    :root {
+      --accent: #0b3d91;
+      --muted: #f2f2f2;
+      --card: #ffffff;
+      --text: #222;
+      --radius: 12px;
+      --bottom-nav-height: 64px;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--muted);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: var(--bottom-nav-height);
+    }
+
+    header {
+      background: linear-gradient(90deg, #0e4aa8, #0b274d);
+      padding: 12px 16px;
+      color: white;
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn {
+      background: none;
+      border: 0;
+      font-size: 22px;
+      color: white;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    #walletBox {
+      margin-left: auto;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.22);
+      font-size: 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      backdrop-filter: blur(6px);
+    }
+
+    .wrap {
+      width: 94%;
+      max-width: 920px;
+      margin: 16px auto;
+      padding: 0 8px 28px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 18px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    }
+
+    .levels {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-top: 0;
+      flex-wrap: wrap;
+    }
+
+    .level {
+      flex: 1;
+      min-width: 100px;
+      background: #fff;
+      border-radius: 10px;
+      border: 2px solid rgba(139, 61, 46, 0.18);
+      padding: 14px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .level .pct {
+      font-size: 26px;
+      color: #d33;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    .level .label {
+      font-size: 13px;
+      color: #0b3d91;
+      margin-top: 6px;
+    }
+
+    .copy-box {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      align-items: center;
+    }
+
+    .copy-input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid rgba(139, 61, 46, 0.12);
+      background: #fff;
+      word-break: break-all;
+      font-size: 14px;
+    }
+
+    .btn-copy {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .invite-box {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    .invite-code {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid rgba(139, 61, 46, 0.12);
+      background: #fff;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .info-note {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 10px;
+      border: 2px dashed rgba(139, 61, 46, 0.12);
+      background: #fff;
+      color: #0b3d91;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    /* Plan & rewards list styling */
+    .plan-details {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #fff;
+      border: 2px solid rgba(11, 61, 145, 0.06);
+      color: #0b3d91;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .plan-details h4 {
+      margin: 0 0 8px 0;
+      color: #08306a;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .plan-details ol {
+      margin: 0;
+      padding-left: 18px;
+      color: #0b3d91;
+    }
+
+    .plan-details li {
+      margin: 8px 0;
+      font-weight: 600;
+    }
+
+    .plan-details p {
+      margin: 6px 0 0 0;
+      font-weight: 400;
+      color: #333;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 14px;
+      z-index: 60;
+      pointer-events: none;
+    }
+
+    .nav-inner {
+      display: flex;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 40px;
+      padding: 8px 10px;
+      box-shadow: 0 18px 40px rgba(10, 30, 80, 0.16);
+      pointer-events: auto;
+      min-width: 340px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      border-radius: 28px;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.14s;
+    }
+
+    .nav-link.active {
+      background: linear-gradient(180deg, var(--accent), #08306a);
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(11, 39, 77, 0.18);
+      transform: translateY(-3px);
+    }
+
+    .top-title {
+      flex: 1;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .wallet-top {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 420px) {
+      .nav-link {
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+
+      .nav-inner {
+        gap: 4px;
+        padding: 6px 8px;
+      }
+    }
+
+    #refStatusMsg {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <button class="back-btn" onclick="history.back()">←</button>
+    Share
+    <div id="walletBox">Wallet: ₹ <span id="walletAmount">0</span></div>
+  </header>
+  <main class="wrap">
+    <div class="card">
+      <!-- Level % -->
+      <div class="levels">
+        <div class="level">
+          <div class="label">Level 1</div>
+          <div class="pct">25%</div>
+        </div>
+        <div class="level">
+          <div class="label">Level 2</div>
+          <div class="pct">3%</div>
+        </div>
+        <div class="level">
+          <div class="label">Level 3</div>
+          <div class="pct">2%</div>
+        </div>
+      </div>
+
+      <!-- Referral link + code (dynamic) -->
+
+      <div class="invite-box">
+        <div class="invite-code" id="inviteCode">Loading...</div>
+        <button class="btn-copy" id="copyCodeBtn">Copy</button>
+      </div>
+
+      <div id="refStatusMsg">
+        Apna referral link friends ko bhejo. Jab woh register karke apna pehla
+        plan buy karenge, aapko unke plan amount ka 25% wallet me milega.
+      </div>
+
+      <div class="info-note">
+        Invite users to join and earn up to <strong>25% commission</strong>.
+        Build your own team. When your team recharge reaches
+        <strong>30,000</strong>, you can contact customer service to receive
+        an extra reward.
+      </div>
+
+      <div class="plan-details" aria-labelledby="planDetailsHeading">
+        <h4 id="planDetailsHeading">Plan & Rewards — Key points</h4>
+        <ol>
+          <li>
+            ₹50 First Plan Bonus
+            <p>
+              Jab koi naya user apna <strong>pehla plan</strong> purchase
+              karta hai, uske wallet me ek baar ka ₹50 bonus add hota hai.
+              Wallet ke pehle se jo paise hain woh cut nahi hote, sirf 50 add
+              hote hain.
+            </p>
+          </li>
+          <li>
+            Minimum Withdrawal: ₹130
+            <p>
+              Withdrawal tabhi request kar sakte ho jab amount kam se kam ₹130
+              ho.
+            </p>
+          </li>
+          <li>
+            10% Automatic Charge on Payouts
+            <p>
+              Withdrawal process hone par 10% service charge lagta hai. Net
+              payout se 10% cut hota hai, aur yahi 10% amount wallet me credit
+              ki tarah dikh sakta hai (platform rule ke hisaab se).
+            </p>
+          </li>
+          <li>
+            Referral Reward: 25%
+            <p>
+              Jis user ne referral code/share link se register kiya hai, jab
+              woh apna pehla plan buy karega, referrer ko us plan price ka
+              <strong>25%</strong> automatically wallet me mil jayega.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </main>
+
+  <!-- bottom nav text-only -->
+  <footer class="bottom-nav">
+    <div class="nav-inner">
+      <a href="home.html" class="nav-link" id="nav-plan">Plan</a>
+      <a href="share.html" class="nav-link" id="nav-share">Share</a>
+      <a href="team.html" class="nav-link" id="nav-team">Team</a>
+      <a href="profile.html" class="nav-link" id="nav-my">My</a>
+    </div>
+  </footer>
+
+  <script>
+    const API = "http://localhost:4000/api/auth";
+
+    async function loadUserData() {
+      const token = localStorage.getItem("authToken");
+
+
+      if (!token) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      try {
+        const res = await fetch(API, {
+          // FIXED: removed trailing slash
+          headers: { Authorization: "Bearer " + token },
+        });
+
+        const data = await res.json();
+
+        if (data.user) {
+          const code = data.user.referralCode;
+          document.getElementById("inviteCode").textContent = code;
+          document.getElementById("walletAmount").textContent =
+            "₹" + Number(data.user.wallet || 0).toFixed(2);
+
+          // Store full link for copy
+          window.referralLink = window.location.origin + "/Frontend/index.html?ref=" + code;
+        } else {
+          document.getElementById("inviteCode").textContent = "Error loading";
+        }
+      } catch (err) {
+        console.log(err);
+        document.getElementById("inviteCode").textContent = "Network Error";
+      }
+    }
+
+    loadUserData();
+
+    // Copy button
+    document.getElementById("copyCodeBtn").onclick = function () {
+      const link = window.referralLink || document.getElementById("inviteCode").textContent;
+      navigator.clipboard.writeText(link);
+      this.textContent = "Copied Link!";
+      setTimeout(() => (this.textContent = "Copy Link"), 1200);
+    };
+  </script>
+</body>
+
+</html>

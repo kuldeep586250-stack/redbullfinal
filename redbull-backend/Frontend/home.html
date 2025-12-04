@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Home - Redbull</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f7f5f4;
+      color: #222;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(90deg, #0b3d91, #08306a);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      z-index: 150;
+    }
+
+    .title {
+      font-weight: 700;
+    }
+
+    .wallet {
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 10px auto;
+      padding: 0 16px;
+      box-sizing: border-box;
+    }
+
+    .banner-wrap .banner {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(10, 30, 80, 0.06);
+    }
+
+    .menu-row .menu-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      text-decoration: none;
+      color: #16325c;
+      font-weight: 700;
+    }
+
+    .tabs-row .tab-switch {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: #16325c;
+      font-weight: 700;
+    }
+
+    .tabs-row .tab-switch.active {
+      background: #fff;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.04);
+    }
+
+    #plansList {
+      margin-top: 12px;
+    }
+
+    .dashboard-section {
+      margin-top: 18px;
+    }
+
+    .dash-header h3 {
+      margin: 0 0 8px 0;
+    }
+
+    .dashboard-list {
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .floating-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 14px;
+      z-index: 120;
+    }
+
+    .floating-inner {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 40px;
+      padding: 8px 10px;
+      box-shadow: 0 18px 40px rgba(10, 30, 80, 0.12);
+    }
+
+    .floating-link {
+      padding: 8px 14px;
+      border-radius: 28px;
+      text-decoration: none;
+      color: #0b3d91;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .floating-link.active {
+      background: #0b3d91;
+      color: #fff;
+    }
+
+    @media (max-width: 720px) {
+      .floating-inner {
+        bottom: 18px;
+        left: 8px;
+        transform: none;
+      }
+    }
+
+    /* Telegram Popup */
+    .tg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+    }
+
+    .tg-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .tg-modal {
+      background: #fff;
+      width: 300px;
+      max-width: 90%;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .tg-overlay.show .tg-modal {
+      transform: scale(1);
+    }
+
+    .tg-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+    }
+
+    .tg-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #222;
+      margin-bottom: 8px;
+    }
+
+    .tg-desc {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .tg-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #2AABEE, #229ED9);
+      color: #fff;
+      font-weight: 700;
+      border-radius: 12px;
+      text-decoration: none;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(42, 171, 238, 0.3);
+    }
+
+    .tg-close {
+      background: transparent;
+      border: none;
+      color: #999;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Auth guard: session check (compatible with script.js login) -->
+  <script>
+    (function () {
+      try {
+        const sess = JSON.parse(
+          localStorage.getItem("lp_session_v1") || "null"
+        );
+        if (!sess || !sess.phone) {
+          window.location.href = "index.html";
+        }
+      } catch (e) {
+        window.location.href = "index.html";
+      }
+    })();
+  </script>
+
+  <header class="app-header">
+    <div class="title">Redbul Income</div>
+    <div class="wallet" id="walletDisplay">Wallet: ₹0</div>
+  </header>
+
+  <div class="container">
+    <div class="banner-wrap">
+      <div class="banner" role="img" aria-label="Top banner" style="
+            height: 220px;
+            background-image: url('assets/images/home.jpg');
+            background-size: cover;
+            background-position: center;
+          "></div>
+    </div>
+
+    <nav class="menu-row" aria-label="Main menu" style="display: flex; gap: 12px; margin-top: 12px">
+      <a href="recharge.html" class="menu-card">⤴ Recharge</a>
+      <a href="withdraw.html" class="menu-card">💳 Withdraw</a>
+      <a href="share.html" class="menu-card">💬 Online</a>
+      <a href="team.html" class="menu-card">👥 Team</a>
+    </nav>
+
+    <div class="tabs-row" style="display: flex; gap: 10px; margin-top: 10px">
+      <button id="dailyTab" class="tab-switch active">Daily income</button>
+      <button id="vipTab" class="tab-switch">VIP income</button>
+    </div>
+
+    <!-- Plans container (script.js will populate based on PLANS_CONFIG + ACTIVE_PLAN_TAB) -->
+    <section id="plansList" class="plans-list" aria-label="Plans list"></section>
+  </div>
+
+  <!-- Floating nav -->
+  <nav class="floating-nav" role="navigation" aria-label="Primary navigation">
+    <div class="floating-inner" role="group">
+      <a href="home.html" class="floating-link active" id="nav-plan">Plan</a>
+      <a href="share.html" class="floating-link" id="nav-share">Share</a>
+      <a href="team.html" class="floating-link" id="nav-team">Team</a>
+      <a href="profile.html" class="floating-link" id="nav-my">My</a>
+    </div>
+  </nav>
+
+  <!-- Global app script (all dynamic logic + backend calls) -->
+  <script src="script.js"></script>
+
+  <!-- Telegram Popup -->
+  <div class="tg-overlay" id="tgPopup">
+    <div class="tg-modal">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/2048px-Telegram_logo.svg.png"
+        alt="Telegram" class="tg-icon">
+      <div class="tg-title">Join Our Channel</div>
+      <div class="tg-desc">Get the latest updates, payment proofs, and support on our official Telegram channel.</div>
+      <a href="https://t.me/+JIO3U521MQVhZDg9" target="_blank" class="tg-btn">Join Now</a>
+      <button class="tg-close" onclick="closeTgPopup()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const tgPopup = document.getElementById('tgPopup');
+
+    // Show on load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        tgPopup.classList.add('show');
+      }, 500);
+    });
+
+    function closeTgPopup() {
+      tgPopup.classList.remove('show');
+    }
+  </script>
+</body>
+
+</html>

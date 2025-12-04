@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard - Redbull</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e293b;
+      /* Slate 800 */
+      --accent: #3b82f6;
+      /* Blue 500 */
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg: #f1f5f9;
+      /* Slate 100 */
+      --card-bg: #ffffff;
+      --text: #334155;
+      --border: #e2e8f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-size: 14px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .logout-btn {
+      padding: 8px 16px;
+      background: #fee2e2;
+      color: #991b1b;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #fecaca;
+    }
+
+    /* Main Layout */
+    .main-content {
+      padding: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+    }
+
+    .col-12 {
+      grid-column: span 12;
+    }
+
+    .col-8 {
+      grid-column: span 8;
+    }
+
+    .col-6 {
+      grid-column: span 6;
+    }
+
+    .col-4 {
+      grid-column: span 4;
+    }
+
+    @media (max-width: 1024px) {
+
+      .col-8,
+      .col-4 {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .col-6 {
+        grid-column: span 12;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+    }
+
+    .card-title {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 15px;
+    }
+
+    .card-body {
+      padding: 0;
+      overflow: auto;
+      max-height: 400px;
+    }
+
+    /* Fixed height for scroll */
+    .card-body.padded {
+      padding: 20px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #64748b;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    /* Status Badges */
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge.warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge.danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge.info {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    /* Buttons */
+    .btn-sm {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-danger {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: #fee2e2;
+      border-color: #fee2e2;
+    }
+
+    /* Forms */
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      flex: 1;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #64748b;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      ring: 2px solid #bfdbfe;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+    }
+
+    .stat-info h4 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-info p {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+    }
+
+    .toast {
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      margin-top: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="brand">Redbull <span>Admin</span></div>
+    <button id="logoutBtn" class="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="main-content">
+    <!-- Stats Row -->
+    <div class="col-12">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <h4 id="totalUsers">-</h4>
+            <p>Total Users</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-info">
+            <h4 id="totalPlans">-</h4>
+            <p>Active Plans</p>
+          </div>
+        </div>
+        <div class="stat-card" style="cursor: pointer;" onclick="document.getElementById('runPayouts').click()">
+          <div class="stat-icon" style="background: #ecfdf5; color: var(--success);">💸</div>
+          <div class="stat-info">
+            <h4 style="font-size: 16px;">Run Payouts</h4>
+            <p>Click to process daily</p>
+            <button id="runPayouts" style="display:none"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table (Half Width) -->
+    <div class="col-6 card">
+      <div class="card-header">
+        <div class="card-title">Registered Users</div>
+        <button class="btn-sm btn-primary" onclick="loadUsers()">Refresh</button>
+      </div>
+      <div class="card-body">
+        <table id="usersTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody id="usersListInner"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Purchased Plans History (Half Width) -->
+    <div class="col-6 card">
+      <div class="card-header">
+        <div class="card-title">Purchased Plans History</div>
+        <button class="btn-sm btn-primary" onclick="loadPurchases()">Refresh</button>
+      </div>
+      <div class="card-body">
+        <table id="purchasesTable">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Mobile</th>
+              <th>Plan Name</th>
+              <th>Amount</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="purchasesList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Payment Requests (Half Width) -->
+    <div class="col-6 card">
+      <div class="card-header">
+        <div class="card-title">Payment Requests</div>
+        <button class="btn-sm btn-primary" onclick="loadPayments()">Refresh</button>
+      </div>
+      <div class="card-body">
+        <table id="paymentsTable">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="paymentsList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Withdrawals (Half Width) -->
+    <div class="col-6 card">
+      <div class="card-header">
+        <div class="card-title">Withdrawal Requests</div>
+        <button class="btn-sm btn-primary" onclick="loadWithdrawals()">Refresh</button>
+      </div>
+      <div class="card-body">
+        <table id="withdrawTable">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Bank Details</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="withdrawList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Plans Management (Full Width) -->
+    <div class="col-12 card">
+      <div class="card-header">
+        <div class="card-title">Manage Plans</div>
+      </div>
+      <div class="card-body padded">
+        <div class="form-row">
+          <div class="form-group"><label>Plan Name</label><input id="planName" class="form-control"
+              placeholder="e.g. Gold Plan"></div>
+          <div class="form-group"><label>Price (₹)</label><input id="planPrice" type="number" class="form-control"
+              placeholder="0"></div>
+          <div class="form-group"><label>Daily Income (₹)</label><input id="planDaily" type="number"
+              class="form-control" placeholder="0"></div>
+          <div class="form-group"><label>Duration (Days)</label><input id="planDays" type="number" class="form-control"
+              placeholder="0"></div>
+          <div class="form-group"><label>Timer (Hrs)</label><input id="planTimer" type="number" class="form-control"
+              placeholder="0"></div>
+          <div class="form-group" style="flex: 0 0 auto; display: flex; align-items: center; height: 38px;">
+            <input type="checkbox" id="planVip" style="margin-right: 6px;"> <label for="planVip"
+              style="margin:0; cursor:pointer;">VIP</label>
+          </div>
+          <button id="addPlanBtn" class="btn-sm btn-primary" style="height: 38px;">Create Plan</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px;"
+          id="plansGrid">
+          <!-- Plan Cards injected here -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toastWrap" class="toast-container"></div>
+
+  <script>
+    const API = "http://localhost:4000/api";
+    const token = localStorage.getItem("authToken");
+    if (!token) location.href = "index.html";
+
+    const toast = (msg) => {
+      const div = document.createElement("div");
+      div.className = "toast";
+      div.innerText = msg;
+      document.getElementById("toastWrap").appendChild(div);
+      setTimeout(() => div.remove(), 3000);
+    };
+
+    // --- Users ---
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API}/admin/users?t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" });
+        const data = await res.json();
+        const tbody = document.getElementById("usersListInner");
+        tbody.innerHTML = "";
+        document.getElementById("totalUsers").innerText = data.users?.length || 0;
+
+        if (data.success) {
+          data.users.forEach(u => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+               <td>
+                 <div style="display:flex; align-items:center; gap:10px;">
+                   <div style="width:32px; height:32px; background:#e2e8f0; border-radius:50%; display:grid; place-items:center; font-weight:700; color:#64748b;">${u.name?.[0] || 'U'}</div>
+                   <div>${u.name || 'Unknown'}</div>
+                 </div>
+               </td>
+               <td>${u.phone || '-'}</td>
+               <td><span class="badge ${u.role === 'admin' ? 'info' : 'warning'}">${u.role}</span></td>
+               <td>${new Date().toLocaleDateString()}</td> 
+             `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // --- Payments ---
+    async function loadPayments() {
+      try {
+        const res = await fetch(`${API}/admin/payments?t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" });
+        const data = await res.json();
+        const tbody = document.getElementById("paymentsList");
+        tbody.innerHTML = "";
+
+        if (data.success) {
+          data.payments.forEach(p => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>
+                <div style="font-weight:500;">${p.userId?.name || 'Unknown'}</div>
+                <div style="font-size:11px; color:#94a3b8;">UTR: ${p.utr}</div>
+              </td>
+              <td style="font-weight:600;">₹${p.amount}</td>
+              <td><span class="badge info">${p.type === 'wallet_topup' ? 'Topup' : 'Plan'}</span></td>
+              <td>
+                ${p.status === 'pending' ?
+                `<div style="display:flex; gap:6px;">
+                    <button class="btn-sm btn-primary" onclick="approvePayment('${p._id}')">✓</button>
+                    <button class="btn-sm btn-danger" onclick="rejectPayment('${p._id}')">✕</button>
+                   </div>`
+                : `<span class="badge ${p.status === 'approved' ? 'success' : 'danger'}">${p.status}</span>`
+              }
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // --- Withdrawals ---
+    async function loadWithdrawals() {
+      try {
+        const res = await fetch(`${API}/admin/withdrawals?t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" });
+        const data = await res.json();
+        const tbody = document.getElementById("withdrawList");
+        tbody.innerHTML = "";
+
+        if (data.success) {
+          data.withdrawals.forEach(w => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>
+                <div style="font-weight:500;">${w.userId?.name || 'Unknown'}</div>
+                <div style="font-size:11px; color:#94a3b8;">${w.mobile || '-'}</div>
+              </td>
+              <td style="font-weight:600;">₹${w.amount}</td>
+              <td>
+                <div style="font-size:12px;">${w.bankName}</div>
+                <div style="font-size:11px; color:#94a3b8;">${w.account}</div>
+              </td>
+              <td>
+                ${w.status === 'pending' ?
+                `<div style="display:flex; gap:6px;">
+                    <button class="btn-sm btn-primary" onclick="approveWithdrawal('${w._id}')">✓</button>
+                    <button class="btn-sm btn-danger" onclick="rejectWithdrawal('${w._id}')">✕</button>
+                   </div>`
+                : `<span class="badge ${w.status === 'approved' ? 'success' : 'danger'}">${w.status}</span>`
+              }
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // --- Purchased Plans ---
+    async function loadPurchases() {
+      try {
+        const res = await fetch(`${API}/admin/purchases?t=${Date.now()}`, { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" });
+        const data = await res.json();
+        const tbody = document.getElementById("purchasesList");
+        tbody.innerHTML = "";
+
+        if (data.success) {
+          data.purchases.forEach(p => {
+            // Parse description for Plan Name if possible, or use description
+            // Description format: "Purchased {name}"
+            let planName = p.description.replace("Purchased ", "");
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>
+                <div style="font-weight:500;">${p.userId?.name || 'Unknown'}</div>
+              </td>
+              <td>${p.userId?.phone || '-'}</td>
+              <td><span class="badge info">${planName}</span></td>
+              <td style="font-weight:600;">₹${p.amount}</td>
+              <td>${new Date(p.date).toLocaleString()}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // --- Plans ---
+    async function loadPlans() {
+      try {
+        const res = await fetch(`${API}/plans?t=${Date.now()}`, { cache: "no-store" });
+        const data = await res.json();
+        const grid = document.getElementById("plansGrid");
+        grid.innerHTML = "";
+        document.getElementById("totalPlans").innerText = data.plans?.length || 0;
+
+        if (data.success) {
+          data.plans.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.style.padding = "16px";
+            div.innerHTML = `
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div style="font-weight:700; color:var(--primary);">${p.name} ${p.isVip ? '⭐' : ''}</div>
+                <div style="font-weight:600; color:var(--accent);">₹${p.price}</div>
+              </div>
+              <div style="font-size:12px; color:#64748b; margin-bottom:12px;">
+                Daily: ₹${p.daily} • ${p.days > 0 ? p.days + ' Days' : p.timerHours + ' Hrs'}
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-sm btn-primary" style="flex:1; background:white; color:var(--accent); border:1px solid var(--border);" onclick="editPlan('${p._id}')">Edit</button>
+                <button class="btn-sm btn-danger" style="flex:1;" onclick="deletePlan('${p._id}')">Delete</button>
+              </div>
+            `;
+            grid.appendChild(div);
+          });
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // --- Actions ---
+    async function approvePayment(id) {
+      const res = await fetch(`${API}/payment/approve`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ paymentId: id }) });
+      const data = await res.json();
+      toast(data.success ? "Approved" : data.message);
+      if (data.success) loadPayments();
+    }
+
+    async function rejectPayment(id) {
+      const reason = prompt("Reason:"); if (!reason) return;
+      const res = await fetch(`${API}/payment/reject`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ paymentId: id, reason }) });
+      const data = await res.json();
+      toast(data.success ? "Rejected" : data.message);
+      if (data.success) loadPayments();
+    }
+
+    async function approveWithdrawal(id) {
+      const res = await fetch(`${API}/admin/withdraw/approve`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ withdrawId: id }) });
+      const data = await res.json();
+      toast(data.success ? "Approved" : data.message);
+      if (data.success) loadWithdrawals();
+    }
+
+    async function rejectWithdrawal(id) {
+      const reason = prompt("Reason:"); if (!reason) return;
+      const res = await fetch(`${API}/admin/withdraw/reject`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ withdrawId: id, reason }) });
+      const data = await res.json();
+      toast(data.success ? "Rejected" : data.message);
+      if (data.success) loadWithdrawals();
+    }
+
+    document.getElementById("addPlanBtn").onclick = async () => {
+      const body = {
+        name: document.getElementById("planName").value,
+        price: Number(document.getElementById("planPrice").value),
+        daily: Number(document.getElementById("planDaily").value),
+        days: Number(document.getElementById("planDays").value),
+        timerHours: Number(document.getElementById("planTimer").value),
+        type: document.getElementById("planDays").value == "0" ? "timer" : "buy",
+        isVip: document.getElementById("planVip").checked
+      };
+      const res = await fetch(`${API}/plans`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(body) });
+      const data = await res.json();
+      toast(data.success ? "Plan Created" : data.message);
+      if (data.success) loadPlans();
+    };
+
+    async function editPlan(id) {
+      const newName = prompt("New Name:"); if (!newName) return;
+      const res = await fetch(`${API}/plans/${id}`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ name: newName }) });
+      const data = await res.json();
+      toast(data.success ? "Plan Updated" : data.message);
+      if (data.success) loadPlans();
+    }
+
+    async function deletePlan(id) {
+      if (!confirm("Delete?")) return;
+      const res = await fetch(`${API}/plans/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      toast(data.success ? "Plan Deleted" : data.message);
+      if (data.success) loadPlans();
+    }
+
+    document.getElementById("logoutBtn").onclick = () => { localStorage.clear(); location.href = "index.html"; };
+    document.getElementById("runPayouts").onclick = async () => { /* Add logic if needed */ };
+
+    // Init
+    loadUsers(); loadPlans(); loadPayments(); loadWithdrawals(); loadPurchases();
+  </script>
+</body>
+
+</html>

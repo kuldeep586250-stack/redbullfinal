@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard - Lipton</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="title">Dashboard</div>
+    <div class="wallet" id="walletDisplayDashboard">Wallet: ₹0</div>
+  </header>
+
+  <div class="container">
+    <!-- Add item form -->
+    <section class="card">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input id="newItemTitle" type="text" placeholder="Item title (e.g. Lipton Plan)" style="flex:2;padding:10px;border-radius:8px;border:1px solid #ddd;">
+        <input id="newItemPrice" type="number" placeholder="Price (₹)" style="width:120px;padding:10px;border-radius:8px;border:1px solid #ddd;">
+        <input id="newItemDaily" type="number" placeholder="Daily" style="width:120px;padding:10px;border-radius:8px;border:1px solid #ddd;">
+        <input id="newItemImg" type="text" placeholder="Image path (images/redbull.png)" style="flex:1;padding:10px;border-radius:8px;border:1px solid #ddd;">
+        <button class="primary" id="addItemBtn" style="width:140px;">Add Item</button>
+      </div>
+      <p class="small" style="margin-top:8px">Tip: provide `images/yourimage.png` or leave empty to use default.</p>
+    </section>
+
+    <!-- Filters (optional simple) -->
+    <section class="card" style="display:flex;gap:10px;align-items:center;">
+      <label style="font-weight:600;margin-right:6px">Sort:</label>
+      <select id="sortSelect" style="padding:8px;border-radius:8px;border:1px solid #ddd">
+        <option value="new">Newest</option>
+        <option value="price_low">Price low→high</option>
+        <option value="price_high">Price high→low</option>
+      </select>
+    </section>
+
+    <!-- Dashboard list -->
+    <section id="dashboardList" class="plans-list"></section>
+
+    <!-- loader indicator -->
+    <div id="loader" style="text-align:center;padding:18px;color:#666;display:none">Loading more items...</div>
+  </div>
+
+  <footer class="bottom-nav">
+    <a href="home.html" class="nav-link">Plan</a>
+    <a href="share.html" class="nav-link">Share</a>
+    <a href="team.html" class="nav-link">Team</a>
+    <a href="profile.html" class="nav-link">My</a>
+  </footer>
+
+<script src="script.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

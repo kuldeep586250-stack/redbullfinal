@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Team - Redbull</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --accent: #0b3d91;
+    }
+
+    .team-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+    }
+
+    .team-back {
+      background: none;
+      border: 0;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .team-title {
+      flex: 1;
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .header-wallet {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .team-wrap {
+      width: 94%;
+      max-width: 920px;
+      margin: 16px auto;
+      padding: 0 12px 12px;
+      box-sizing: border-box;
+    }
+
+    .team-stats {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat {
+      flex: 1;
+      text-align: center;
+      padding: 10px 8px;
+      border-radius: 10px;
+    }
+
+    .stat .label {
+      color: #0b3d91;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .stat .value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .level-tabs {
+      margin-top: 16px;
+      background: #f8efe8;
+      border-radius: 30px;
+      padding: 6px;
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+      box-shadow: none;
+      align-items: center;
+    }
+
+    .level-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 24px;
+      border: none;
+      background: transparent;
+      font-weight: 700;
+      color: #0b3d91;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .level-btn.active {
+      background: #fff;
+      color: var(--accent);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .level-btn.active::after {
+      content: "";
+      position: absolute;
+      left: 40%;
+      right: 40%;
+      bottom: -8px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 4px;
+    }
+
+    .team-list {
+      margin-top: 18px;
+      min-height: 200px;
+      background: transparent;
+    }
+
+    .floating-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 14px;
+      z-index: 60;
+      pointer-events: none;
+      box-sizing: border-box;
+    }
+
+    .floating-inner {
+      display: flex;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 40px;
+      padding: 8px 10px;
+      box-shadow: 0 18px 40px rgba(10, 30, 80, 0.12);
+      pointer-events: auto;
+      min-width: 320px;
+      max-width: 92vw;
+      align-items: center;
+    }
+
+    .floating-link {
+      padding: 8px 14px;
+      border-radius: 28px;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.14s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .floating-link.active {
+      background: linear-gradient(180deg, var(--accent), #08306a);
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(11, 39, 77, 0.16);
+      transform: translateY(-3px);
+    }
+
+    @media (max-width: 420px) {
+      .stat .value {
+        font-size: 20px;
+      }
+
+      .level-btn {
+        padding: 10px 6px;
+        font-size: 14px;
+      }
+
+      .floating-inner {
+        min-width: 260px;
+        gap: 4px;
+        padding: 6px 8px;
+      }
+
+      .floating-link {
+        padding: 6px 10px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- header -->
+  <header class="team-header">
+    <button class="team-back" onclick="history.back()" aria-label="Back">
+      ←
+    </button>
+    <div class="team-title">Team</div>
+    <div class="header-wallet" id="headerWallet">Wallet: ₹ 0</div>
+  </header>
+
+  <main class="team-wrap">
+    <!-- stats card -->
+    <section class="team-stats" aria-label="Team summary">
+      <div class="stat">
+        <div class="label">Team Recharge</div>
+        <div id="teamRecharge" class="value">₹ 0</div>
+      </div>
+
+      <div style="width: 12px"></div>
+
+      <div class="stat">
+        <div class="label">Team size</div>
+        <div id="teamSize" class="value">0</div>
+      </div>
+    </section>
+
+    <!-- level tabs -->
+    <div class="level-tabs" role="tablist" aria-label="Team levels">
+      <button class="level-btn active" data-level="1" role="tab" aria-selected="true">
+        Level 1
+      </button>
+      <button class="level-btn" data-level="2" role="tab" aria-selected="false">
+        Level 2
+      </button>
+      <button class="level-btn" data-level="3" role="tab" aria-selected="false">
+        Level 3
+      </button>
+    </div>
+
+    <!-- list area -->
+    <div id="teamList" class="team-list" aria-live="polite">
+      <div id="noData" style="
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            color: #666;
+          ">
+        No team members yet in this level.
+      </div>
+    </div>
+  </main>
+
+  <!-- floating nav -->
+  <nav class="floating-nav" role="navigation" aria-label="Main navigation">
+    <div class="floating-inner" role="group" aria-label="Primary">
+      <a href="home.html" class="floating-link" id="nav-plan">Plan</a>
+      <a href="share.html" class="floating-link" id="nav-share">Share</a>
+      <a href="team.html" class="floating-link active" id="nav-team">Team</a>
+      <a href="profile.html" class="floating-link" id="nav-my">My</a>
+    </div>
+  </nav>
+
+  <script>
+    const API_BASE = "http://localhost:4000";
+
+    // Store data for all 3 levels
+    let teamData = {
+      1: { teamRecharge: 0, teamSize: 0, members: [] },
+      2: { teamRecharge: 0, teamSize: 0, members: [] },
+      3: { teamRecharge: 0, teamSize: 0, members: [] }
+    };
+
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      window.location.href = "index.html";
+    }
+
+    const rechargeEl = document.getElementById("teamRecharge");
+    const sizeEl = document.getElementById("teamSize");
+    const listEl = document.getElementById("teamList");
+    const noDataEl = document.getElementById("noData");
+    const headerWalletEl = document.getElementById("headerWallet");
+
+    // Load profile and team from backend
+    async function loadProfileAndTeam() {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      try {
+        // profile (USING /api/auth LIKE SHARE PAGE)
+        const pRes = await fetch(API_BASE + "/api/auth", {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+        const pData = await pRes.json();
+        if (pData && pData.user) {
+          const u = pData.user;
+          if (headerWalletEl) {
+            headerWalletEl.textContent = "Wallet: ₹ " + (u.wallet || 0).toFixed(2);
+          }
+          localStorage.setItem("currentUser", JSON.stringify(u));
+
+          // SYNC WITH LEGACY LOCAL STORAGE (lp_users_v1)
+          const session = JSON.parse(localStorage.getItem("lp_session_v1") || "null");
+          if (session && session.phone === u.phone) {
+            const users = JSON.parse(localStorage.getItem("lp_users_v1") || "[]");
+            const idx = users.findIndex(user => user.phone === u.phone);
+            if (idx !== -1) {
+              users[idx].wallet = u.wallet;
+              localStorage.setItem("lp_users_v1", JSON.stringify(users));
+            }
+          }
+        }
+
+        // team (multi-level)
+        const tRes = await fetch(API_BASE + "/api/user/team", {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+        const tData = await tRes.json();
+
+        if (tData && tData.success) {
+          // Helper to map backend format to frontend format
+          const mapData = (d) => ({
+            teamRecharge: d.recharge || 0,
+            teamSize: d.size || 0,
+            members: d.members || []
+          });
+
+          teamData[1] = mapData(tData.level1 || {});
+          teamData[2] = mapData(tData.level2 || {});
+          teamData[3] = mapData(tData.level3 || {});
+        }
+
+        // after load, render current active level (default: 1)
+        renderLevel(1);
+      } catch (err) {
+        console.error("Error loading team:", err);
+        renderLevel(1);
+      }
+    }
+
+    function renderLevel(level) {
+      // Stats + list for requested level
+      const data = teamData[level] || { teamRecharge: 0, teamSize: 0, members: [] };
+
+      rechargeEl.textContent = "₹ " + (data.teamRecharge || 0);
+      sizeEl.textContent = data.teamSize || 0;
+
+      listEl.innerHTML = "";
+
+      if (!data.members || data.members.length === 0) {
+        listEl.appendChild(noDataEl);
+        noDataEl.style.display = "block";
+        noDataEl.textContent = `No team members yet in Level ${level}.`;
+        return;
+      }
+
+      // Hide no data msg if we have members
+      if (noDataEl.parentNode === listEl) listEl.removeChild(noDataEl);
+
+      const wrap = document.createElement("div");
+      wrap.style.marginTop = "12px";
+
+      data.members.forEach((m) => {
+        const card = document.createElement("div");
+        card.style.background = "#fff";
+        card.style.borderRadius = "10px";
+        card.style.padding = "12px";
+        card.style.marginBottom = "10px";
+        card.style.boxShadow = "0 10px 20px rgba(0,0,0,0.04)";
+
+        const plans = Array.isArray(m.plans) ? m.plans : [];
+        const planLines =
+          plans
+            .map((p) => {
+              const nm = p.name || "Plan";
+              const pr = Number(p.amount) || 0;
+              return `<div style="font-size:12px;color:#555;margin-top:2px;">• ${nm} — ₹ ${pr}</div>`;
+            })
+            .join("") ||
+          `<div style="font-size:12px;color:#999;margin-top:4px;">No plans yet</div>`;
+
+        card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+          <div>
+            <div style="font-weight:700;color:var(--accent)">User: ${m.phone
+          }</div>
+            <div style="font-size:12px;color:#666">Total purchase: ₹ ${m.totalRecharge || 0
+          }</div>
+            ${planLines}
+          </div>
+        </div>
+      `;
+
+        wrap.appendChild(card);
+      });
+
+      listEl.appendChild(wrap);
+    }
+
+    // Tab handling
+    document.querySelectorAll(".level-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".level-btn").forEach((b) => {
+          b.classList.remove("active");
+          b.setAttribute("aria-selected", "false");
+        });
+        btn.classList.add("active");
+        btn.setAttribute("aria-selected", "true");
+
+        const level = Number(btn.dataset.level || "1");
+        renderLevel(level);
+      });
+
+      btn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+    });
+
+    // bottom nav highlight
+    (function highlightFloatingNav() {
+      const path = location.pathname.split("/").pop();
+      const map = {
+        "home.html": "nav-plan",
+        "share.html": "nav-share",
+        "team.html": "nav-team",
+        "profile.html": "nav-my",
+      };
+      let id = map[path] || null;
+      if (!id && /team/i.test(location.href)) id = "nav-team";
+      if (id) {
+        document
+          .querySelectorAll(".floating-link")
+          .forEach((l) => l.classList.remove("active"));
+        const el = document.getElementById(id);
+        if (el) el.classList.add("active");
+      }
+    })();
+
+    // Init on load
+    window.addEventListener("DOMContentLoaded", () => {
+      loadProfileAndTeam();
+    });
+  </script>
+</body>
+
+</html>

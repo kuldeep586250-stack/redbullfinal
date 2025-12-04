@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bind Bank Card - Lipton</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Small page-specific styles, safe to include inline */
+    body { background: #f3f3f3; -webkit-font-smoothing:antialiased; font-family: Inter, Arial, sans-serif; margin:0; padding-bottom:64px; color:#222; }
+    .app-header { display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--accent,#8b3d2e); color:#fff; position:sticky; top:0; z-index:50; }
+    .back-btn { background:none; border:none; color:#fff; font-size:20px; cursor:pointer; }
+    .container { width:94%; max-width:920px; margin:16px auto; box-sizing:border-box; }
+
+    .card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 10px 24px rgba(0,0,0,0.06); margin:12px 0; }
+    .form-row { margin-bottom:12px; }
+    .label { font-weight:600; margin-bottom:6px; color:#5a3a2f; }
+    .input {
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid #e6e2de;
+      background:#fafafa;
+      font-size:15px;
+      box-sizing:border-box;
+    }
+    .primary { width:100%; padding:12px; border-radius:10px; border:none; background:var(--accent,#8b3d2e); color:#fff; font-weight:700; cursor:pointer; margin-top:8px;}
+    .ghost { width:100%; padding:12px; border-radius:10px; border:1px solid rgba(139,61,46,0.12); background:#fff; color:var(--accent,#8b3d2e); font-weight:700; cursor:pointer; margin-top:8px; }
+
+    .small { font-size:13px; color:#666; margin-top:8px; }
+  </style>
+</head>
+<body>
+
+  <header class="app-header" role="banner">
+    <button class="back-btn" id="back" aria-label="Back">←</button>
+    <div class="title">Bind Wallet Address</div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card" aria-labelledby="heading-form">
+      <h2 id="heading-form" style="margin:0 0 12px 0;color:var(--accent,#8b3d2e)">Bind Bank Card</h2>
+
+      <div class="form-row">
+        <div class="label">Real Name</div>
+        <input id="realName" class="input" type="text" placeholder="Enter your real name" />
+      </div>
+
+      <div class="form-row">
+        <div class="label">IFSC</div>
+        <input id="ifsc" class="input" type="text" placeholder="Enter IFSC" />
+      </div>
+
+      <div class="form-row">
+        <div class="label">Bank Account Number</div>
+        <input id="acct" class="input" type="text" inputmode="numeric" placeholder="Enter your bank account number" />
+      </div>
+
+      <div class="form-row">
+        <div class="label">Confirm Number</div>
+        <input id="acct2" class="input" type="text" inputmode="numeric" placeholder="Re-enter account number" />
+      </div>
+
+      <button id="confirmBtn" class="primary" aria-live="polite">Confirm</button>
+      <button id="cancelBtn" class="ghost">Cancel</button>
+
+      <p class="small">Note: we only store these fields locally for demo. Replace storage with your API call when integrating backend.</p>
+    </section>
+  </main>
+
+<script>
+  // back behavior: go back if possible, else open my.html
+  document.getElementById('back').addEventListener('click', () => {
+    if (history.length > 1) history.back();
+    else window.location.href = 'my.html';
+  });
+  document.getElementById('back').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('back').click(); });
+
+  // form handlers
+  const realName = document.getElementById('realName');
+  const ifsc = document.getElementById('ifsc');
+  const acct = document.getElementById('acct');
+  const acct2 = document.getElementById('acct2');
+  const confirmBtn = document.getElementById('confirmBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+
+  function validateIFSC(code) {
+    // basic IFSC pattern: 4 letters + 0 + 6 digits (simple check)
+    return /^[A-Za-z]{4}0[A-Za-z0-9]{6}$/.test(code.trim());
+  }
+
+  confirmBtn.addEventListener('click', () => {
+    const name = realName.value.trim();
+    const code = ifsc.value.trim().toUpperCase();
+    const a = acct.value.trim();
+    const a2 = acct2.value.trim();
+
+    if (!name) { alert('Please enter your real name.'); realName.focus(); return; }
+    if (!code) { alert('Please enter IFSC.'); ifsc.focus(); return; }
+    // optional stronger IFSC check; if fails, ask to confirm
+    if (!validateIFSC(code)) {
+      if (!confirm('IFSC format looks unusual. Continue anyway?')) { ifsc.focus(); return; }
+    }
+    if (!a || !a2) { alert('Enter and confirm account number.'); acct.focus(); return; }
+    if (a !== a2) { alert('Account numbers do not match.'); acct2.focus(); return; }
+
+    // save to localStorage as demo (replace with API call in real app)
+    const bankInfo = { name: name, ifsc: code, account: a, savedAt: new Date().toISOString() };
+    try {
+      localStorage.setItem('lipton_bank_info', JSON.stringify(bankInfo));
+    } catch (e) {
+      console.warn('localStorage failed', e);
+    }
+
+    alert('Bank details saved successfully.');
+    // navigate back to profile/my page
+    window.location.href = 'my.html';
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    if (confirm('Discard changes and go back?')) {
+      if (history.length > 1) history.back();
+      else window.location.href = 'my.html';
+    }
+  });
+
+  // allow Enter to submit on the last input
+  acct2.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') confirmBtn.click();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - Redbull</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body.login-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: url("assets/images/bg.jpg") center/cover no-repeat fixed;
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    }
+
+    .center-card {
+      width: 92%;
+      max-width: 420px;
+      background: white;
+      opacity: 50;
+      padding: 26px 24px;
+      border-radius: 18px;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+
+    .tab {
+      font-size: 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      color: #333;
+      padding-bottom: 6px;
+      transition: 0.3s ease;
+    }
+
+    .tab.active {
+      border-bottom: 2px solid #0b3d91;
+      transform: translateY(-2px);
+    }
+
+    .form-container {
+      display: flex;
+      width: 200%;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .form {
+      width: 50%;
+      padding-right: 10px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .form.active {
+      opacity: 1;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #e6e6e6;
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+
+    .input-wrap input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 15px;
+    }
+
+    .primary.full {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(180deg, #0b3d91, #06307a);
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #0b3d91;
+      color: white;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: 0.4s ease;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* FORGOT MODAL */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .modal {
+      background: #fff;
+      width: 90%;
+      max-width: 380px;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+    }
+
+    .otpDigit {
+      width: 40px;
+      height: 48px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .otp-input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body class="login-page">
+  <main class="center-card">
+    <div class="tabs">
+      <button class="tab active" data-target="login">Login</button>
+      <button class="tab" data-target="register">Register</button>
+    </div>
+
+    <div class="form-container" id="formSlider">
+      <!-- LOGIN -->
+      <section id="login" class="form active">
+        <div class="input-wrap">
+          <input id="loginUser" type="text" placeholder="Enter email or phone" />
+        </div>
+
+        <div class="input-wrap">
+          <input id="loginPass" type="password" placeholder="Enter password" />
+        </div>
+
+        <div style="text-align: right; margin: 6px 0 12px">
+          <span id="forgotBtn" style="
+                font-size: 14px;
+                color: #0b3d91;
+                font-weight: 600;
+                cursor: pointer;
+              ">
+            Forgot Password?
+          </span>
+        </div>
+
+        <button class="primary full" id="loginBtn">Login</button>
+      </section>
+
+      <!-- REGISTER -->
+      <section id="register" class="form">
+        <div class="input-wrap">
+          <input id="regEmail" type="email" placeholder="Enter email" />
+        </div>
+
+        <div class="input-wrap">
+          <input id="regPhone" type="tel" placeholder="Enter phone number" />
+        </div>
+
+        <div class="input-wrap">
+          <input id="regPass" type="password" placeholder="Enter password" />
+        </div>
+
+        <div class="input-wrap">
+          <input id="regPass2" type="password" placeholder="Confirm password" />
+        </div>
+        <div style="text-align: right">
+          <label id="refLabel" style="cursor: pointer; color: #0b3d91; font-weight: 600">Referral Code
+            (optional)</label>
+        </div>
+
+        <!-- REFERRAL CODE MODAL -->
+        <div class="modal-bg" id="refModal" style="
+              display: none;
+              justify-self: end;
+              background-color: transparent;
+            ">
+          <div class="modal">
+            <h3>Enter Referral Code (Optional)</h3>
+            <input type="text" id="refCodeInput" class="otp-input" placeholder="Referral code" />
+            <button class="primary full" id="refSaveBtn">Save</button>
+            <button class="primary full" style="background: #999; margin-top: 10px" id="refCloseBtn">
+              Close
+            </button>
+          </div>
+        </div>
+
+        <button class="primary full" id="registerBtn">Register</button>
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL FOR FORGOT PASSWORD -->
+  <div class="modal-bg" id="forgotModal">
+    <div class="modal" id="forgotModalBox">
+      <h3 style="margin: 0 0 15px">Forgot Password</h3>
+
+      <!-- EMAIL -->
+      <input type="email" id="fpEmail" placeholder="Enter email" class="otp-input" />
+
+      <!-- SEND OTP BUTTON -->
+      <button class="primary full" id="sendOtpBtn">Generate OTP</button>
+
+      <!-- OTP INPUT BOXES -->
+      <div id="otpBox" style="margin-top: 15px; gap: 10px; justify-self: center">
+        <input class="otpDigit" maxlength="1" />
+        <input class="otpDigit" maxlength="1" />
+        <input class="otpDigit" maxlength="1" />
+        <input class="otpDigit" maxlength="1" />
+        <input class="otpDigit" maxlength="1" />
+        <input class="otpDigit" maxlength="1" />
+      </div>
+
+      <div id="otpTimer" style="
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 700;
+            color: #0b3d91;
+          ">
+        01:00
+      </div>
+
+      <!-- RESEND BUTTON -->
+      <button id="resendBtn" class="primary full" style="display: none; background: #ff9800; margin-top: 10px">
+        Resend OTP
+      </button>
+
+      <!-- NEW PASSWORD -->
+      <input type="password" id="fpNewPass" class="otp-input" placeholder="Enter new password" />
+
+      <!-- RESET PASSWORD BUTTON -->
+      <button class="primary full" id="resetPassBtn">Reset Password</button>
+
+      <!-- CLOSE -->
+      <button class="primary full" style="background: #999; margin-top: 10px" id="closeModal">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    /* FIXED API URLS */
+    const AUTH_API = "http://localhost:4000/api/auth";
+    const PASS_API = "http://localhost:4000/api/password";
+
+    /* TABS */
+    const slider = $("formSlider");
+    document.querySelectorAll(".tab").forEach((tab, index) => {
+      tab.addEventListener("click", () => {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        slider.style.transform = `translateX(-${index * 50}%)`;
+
+        document
+          .querySelectorAll(".form")
+          .forEach((f) => f.classList.remove("active"));
+        document.getElementById(tab.dataset.target).classList.add("active");
+      });
+    });
+
+    /* TOAST */
+    function showToast(msg) {
+      const toast = $("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    let referralCode = ""; // store referral code
+
+    $("refLabel").onclick = () => ($("refModal").style.display = "flex");
+    $("refCloseBtn").onclick = () => ($("refModal").style.display = "none");
+
+    $("refSaveBtn").onclick = () => {
+      referralCode = $("refCodeInput").value.trim();
+      $("refModal").style.display = "none";
+      if (referralCode) showToast("Referral code saved");
+    };
+
+    /* REGISTER */
+    $("registerBtn").addEventListener("click", async () => {
+      const email = $("regEmail").value.trim();
+      const phone = $("regPhone").value.trim();
+      const pass = $("regPass").value;
+      const pass2 = $("regPass2").value;
+
+      if (!email || !phone || !pass || !pass2)
+        return showToast("Please fill all fields");
+      if (pass !== pass2) return showToast("Passwords do not match");
+
+      try {
+        const res = await fetch(`${AUTH_API}/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            phone,
+            password: pass,
+            inviteCode: referralCode ? referralCode.trim().toUpperCase() : "",
+          }),
+        });
+
+        const data = await res.json();
+        showToast(data.message);
+
+        if (data.success) {
+          referralCode = "";
+          $("refCodeInput").value = "";
+          document.querySelector('.tab[data-target="login"]').click();
+        }
+      } catch {
+        showToast("Server error");
+      }
+    });
+
+    /* LOGIN */
+    $("loginBtn").addEventListener("click", async () => {
+      const user = $("loginUser").value.trim();
+      const pass = $("loginPass").value.trim();
+
+      if (!user || !pass) return showToast("Enter login details");
+
+      try {
+        const res = await fetch(`${AUTH_API}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user, password: pass }),
+        });
+
+        const data = await res.json();
+        if (!data.success) return showToast(data.message);
+
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("role", data.role);
+
+        const phone = data.user.phone;
+        localStorage.setItem("lp_session_v1", JSON.stringify({ phone }));
+
+        const users = JSON.parse(localStorage.getItem("lp_users_v1") || "[]");
+        const existingIndex = users.findIndex((u) => u.phone === phone);
+        const userData = {
+          phone: data.user.phone,
+          email: data.user.email,
+          wallet: data.user.wallet || 0,
+          referralCode: data.user.referralCode,
+          role: data.user.role,
+          plans: existingIndex !== -1 ? users[existingIndex].plans : [],
+          withdrawPass: existingIndex !== -1 ? users[existingIndex].withdrawPass : "",
+        };
+
+        if (existingIndex !== -1) {
+          users[existingIndex] = { ...users[existingIndex], ...userData };
+        } else {
+          users.push(userData);
+        }
+        localStorage.setItem("lp_users_v1", JSON.stringify(users));
+
+        showToast("Login successful");
+
+        setTimeout(() => {
+          window.location.href =
+            data.role === "admin" ? "admin.html" : "home.html";
+        }, 800);
+      } catch {
+        showToast("Server error");
+      }
+    });
+
+    /* OPEN FORGOT MODAL */
+    $("forgotBtn").onclick = () => ($("forgotModal").style.display = "flex");
+    $("closeModal").onclick = () => ($("forgotModal").style.display = "none");
+
+    /* TIMER */
+    let timerInterval;
+    function startTimer() {
+      let time = 60;
+      $("otpTimer").style.display = "block";
+      $("resendBtn").style.display = "none";
+
+      timerInterval = setInterval(() => {
+        let m = String(Math.floor(time / 60)).padStart(2, "0");
+        let s = String(time % 60).padStart(2, "0");
+        $("otpTimer").innerText = `${m}:${s}`;
+
+        if (time === 0) {
+          clearInterval(timerInterval);
+          $("otpTimer").style.display = "none";
+          $("resendBtn").style.display = "block";
+        }
+        time--;
+      }, 1000);
+    }
+
+    /* SEND OTP (with email existence check) */
+    async function sendOTP() {
+      const email = $("fpEmail").value.trim();
+      if (!email) return showToast("Enter email");
+
+      try {
+        const res = await fetch(`${PASS_API}/send-otp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await res.json();
+
+        // ❌ Email not found OR backend returned failure
+        if (!data.success) {
+          showToast("Invalid email — no account found");
+          return;
+        }
+
+        // ✔ Email exists → OTP sent
+        showToast("OTP sent to your email");
+
+        // SHOW OTP BOX
+        $("otpBox").style.display = "flex";
+
+        // CLEAR OLD DIGITS
+        document.querySelectorAll(".otpDigit").forEach((b) => (b.value = ""));
+
+        clearInterval(timerInterval);
+        startTimer();
+      } catch {
+        showToast("Server error");
+      }
+    }
+
+    $("sendOtpBtn").onclick = sendOTP;
+    $("resendBtn").onclick = sendOTP;
+
+    /* VERIFY OTP */
+    async function verifyOTP(code) {
+      const email = $("fpEmail").value.trim();
+
+      try {
+        const res = await fetch(`${PASS_API}/verify-otp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp: code }),
+        });
+
+        const data = await res.json();
+
+        if (!data.success) return showToast(data.message);
+
+        showToast("OTP Verified");
+
+        // Show password fields
+        $("fpNewPass").style.display = "block";
+        $("resetPassBtn").style.display = "block";
+
+        // Hide timer
+        clearInterval(timerInterval);
+        $("otpTimer").style.display = "none";
+      } catch {
+        showToast("Server error");
+      }
+    }
+
+    /* OTP INPUT HANDLING → FIXED */
+    const otpInputs = document.querySelectorAll(".otpDigit");
+
+    otpInputs.forEach((input, index) => {
+      // Auto move on typing
+      input.addEventListener("input", () => {
+        input.value = input.value.replace(/[^0-9]/g, "");
+
+        if (input.value && index < otpInputs.length - 1) {
+          otpInputs[index + 1].focus();
+        }
+
+        checkOTPCompleted();
+      });
+
+      // Backspace logic fixed
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace") {
+          if (input.value === "" && index > 0) {
+            otpInputs[index - 1].focus();
+            otpInputs[index - 1].value = "";
+          }
+        }
+      });
+
+      // Paste full 6-digit OTP
+      input.addEventListener("paste", (e) => {
+        let paste = e.clipboardData.getData("text").trim();
+        if (/^[0-9]{6}$/.test(paste)) {
+          otpInputs.forEach((box, i) => {
+            box.value = paste[i] || "";
+          });
+          checkOTPCompleted();
+        }
+      });
+    });
+
+    // check full 6 digit
+    function checkOTPCompleted() {
+      const otp = Array.from(otpInputs)
+        .map((i) => i.value)
+        .join("");
+      if (otp.length === 6) verifyOTP(otp);
+    }
+
+    /* RESET PASSWORD */
+    $("resetPassBtn").onclick = async () => {
+      const email = $("fpEmail").value.trim();
+      const newPass = $("fpNewPass").value.trim();
+
+      if (!newPass) return showToast("Enter new password");
+
+      try {
+        const res = await fetch(`${PASS_API}/reset-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: newPass }),
+        });
+
+        const data = await res.json();
+        showToast(data.message);
+
+        if (data.success) $("forgotModal").style.display = "none";
+      } catch {
+        showToast("Server error");
+      }
+    };
+    // Init on load
+    window.addEventListener("DOMContentLoaded", () => {
+      // Check for referral code in URL
+      const params = new URLSearchParams(window.location.search);
+      const refParam = params.get("ref");
+      if (refParam) {
+        referralCode = refParam;
+        $("refCodeInput").value = refParam;
+      }
+    });
+  </script>
+</body>
+
+</html>
