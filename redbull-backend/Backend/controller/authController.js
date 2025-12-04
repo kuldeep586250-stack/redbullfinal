@@ -18,7 +18,7 @@ const generateReferral = () => {
 // REGISTER
 export const registerUser = async (req, res) => {
   try {
-    const { phone, email, password, inviteCode } = req.body;
+    const { name, phone, email, password, inviteCode } = req.body;
 
     if (!password || (!phone && !email)) {
       return res.json({
@@ -51,13 +51,14 @@ export const registerUser = async (req, res) => {
     console.log(`[REGISTER] New User: ${phone || email}, InviteCode: ${validInviteCode}`);
 
     // Create new user
-    const user = await User.create({
-      phone: phone || null,
-      email: email || null,
+    const newUser = await User.create({
+      name,
+      phone,
+      email,
       password: hashPass,
       role: "user",
       referralCode: myReferralCode,
-      referredBy: validInviteCode,
+      referredBy: validInviteCode, // Store who referred this user
     });
 
     // -----------------------------

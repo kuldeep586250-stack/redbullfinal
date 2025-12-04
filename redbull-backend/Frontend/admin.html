@@ -514,6 +514,34 @@
 
   <div id="toastWrap" class="toast-container"></div>
 
+  <!-- REASON MODAL -->
+  <div id="reasonModal" class="modal-bg"
+    style="display: none; position: fixed; inset: 0; z-index: 2000; align-items: center; justify-content: center;">
+    <div class="modal">
+      <h3>Enter Reason</h3>
+      <input type="text" id="reasonInput" class="form-control" placeholder="Type reason here..."
+        style="margin-bottom: 16px;">
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button id="reasonCancel" class="btn-sm btn-danger">Cancel</button>
+        <button id="reasonConfirm" class="btn-sm btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT PLAN MODAL -->
+  <div id="editPlanModal" class="modal-bg"
+    style="display: none; position: fixed; inset: 0; z-index: 2000; align-items: center; justify-content: center;">
+    <div class="modal">
+      <h3>Edit Plan Name</h3>
+      <input type="text" id="editPlanInput" class="form-control" placeholder="New Plan Name"
+        style="margin-bottom: 16px;">
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button id="editPlanCancel" class="btn-sm btn-danger">Cancel</button>
+        <button id="editPlanConfirm" class="btn-sm btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API = "http://localhost:4000/api";
     const token = localStorage.getItem("authToken");
@@ -698,8 +726,81 @@
       if (data.success) loadPayments();
     }
 
+    // --- Modal Helpers ---
+    function openReasonModal(title = "Enter Reason") {
+      return new Promise((resolve) => {
+        const modal = document.getElementById("reasonModal");
+        const input = document.getElementById("reasonInput");
+        const confirmBtn = document.getElementById("reasonConfirm");
+        const cancelBtn = document.getElementById("reasonCancel");
+        const titleEl = modal.querySelector("h3");
+
+        titleEl.innerText = title;
+        input.value = "";
+        modal.style.display = "flex";
+        input.focus();
+
+        const cleanup = () => {
+          modal.style.display = "none";
+          confirmBtn.onclick = null;
+          cancelBtn.onclick = null;
+        };
+
+        confirmBtn.onclick = () => {
+          const val = input.value.trim();
+          if (val) {
+            cleanup();
+            resolve(val);
+          } else {
+            alert("Please enter a reason");
+          }
+        };
+
+        cancelBtn.onclick = () => {
+          cleanup();
+          resolve(null);
+        };
+      });
+    }
+
+    function openEditPlanModal(currentName) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById("editPlanModal");
+        const input = document.getElementById("editPlanInput");
+        const confirmBtn = document.getElementById("editPlanConfirm");
+        const cancelBtn = document.getElementById("editPlanCancel");
+
+        input.value = ""; // currentName is not passed in old code, but we could if we had it.
+        modal.style.display = "flex";
+        input.focus();
+
+        const cleanup = () => {
+          modal.style.display = "none";
+          confirmBtn.onclick = null;
+          cancelBtn.onclick = null;
+        };
+
+        confirmBtn.onclick = () => {
+          const val = input.value.trim();
+          if (val) {
+            cleanup();
+            resolve(val);
+          } else {
+            alert("Please enter a name");
+          }
+        };
+
+        cancelBtn.onclick = () => {
+          cleanup();
+          resolve(null);
+        };
+      });
+    }
+
     async function rejectPayment(id) {
-      const reason = prompt("Reason:"); if (!reason) return;
+      const reason = await openReasonModal("Reject Payment Reason");
+      if (!reason) return;
+
       const res = await fetch(`${API}/payment/reject`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ paymentId: id, reason }) });
       const data = await res.json();
       toast(data.success ? "Rejected" : data.message);
@@ -714,7 +815,9 @@
     }
 
     async function rejectWithdrawal(id) {
-      const reason = prompt("Reason:"); if (!reason) return;
+      const reason = await openReasonModal("Reject Withdrawal Reason");
+      if (!reason) return;
+
       const res = await fetch(`${API}/admin/withdraw/reject`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ withdrawId: id, reason }) });
       const data = await res.json();
       toast(data.success ? "Rejected" : data.message);
@@ -738,7 +841,9 @@
     };
 
     async function editPlan(id) {
-      const newName = prompt("New Name:"); if (!newName) return;
+      const newName = await openEditPlanModal();
+      if (!newName) return;
+
       const res = await fetch(`${API}/plans/${id}`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ name: newName }) });
       const data = await res.json();
       toast(data.success ? "Plan Updated" : data.message);

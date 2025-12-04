@@ -196,6 +196,10 @@
       <!-- REGISTER -->
       <section id="register" class="form">
         <div class="input-wrap">
+          <input id="regName" type="text" placeholder="Enter your name" />
+        </div>
+
+        <div class="input-wrap">
           <input id="regEmail" type="email" placeholder="Enter email" />
         </div>
 
@@ -331,12 +335,13 @@
 
     /* REGISTER */
     $("registerBtn").addEventListener("click", async () => {
+      const name = $("regName").value.trim();
       const email = $("regEmail").value.trim();
       const phone = $("regPhone").value.trim();
       const pass = $("regPass").value;
       const pass2 = $("regPass2").value;
 
-      if (!email || !phone || !pass || !pass2)
+      if (!name || !email || !phone || !pass || !pass2)
         return showToast("Please fill all fields");
       if (pass !== pass2) return showToast("Passwords do not match");
 
@@ -345,6 +350,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            name,
             email,
             phone,
             password: pass,
