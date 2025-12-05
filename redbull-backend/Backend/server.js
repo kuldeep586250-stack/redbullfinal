@@ -13,12 +13,11 @@ import withdrawRoutes from "./routes/withdraw.js";
 
 dotenv.config();
 
-// Connect to Database
-connectDB();
+// Connect to Database (will be awaited in startServer)
+// connectDB(); // Removed direct call
 
 // Start Scheduler
 import { startDailyIncomeScheduler } from "./cron/scheduler.js";
-startDailyIncomeScheduler();
 
 const app = express();
 
@@ -49,7 +48,18 @@ app.use("/api/purchases", purchaseRoutes);
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log("--- SERVER RESTARTED ---");
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    startDailyIncomeScheduler();
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log("--- SERVER RESTARTED ---");
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err);
+  }
+};
+
+startServer();

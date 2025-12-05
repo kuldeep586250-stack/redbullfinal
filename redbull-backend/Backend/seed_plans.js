@@ -1,27 +1,65 @@
-import fetch from 'node-fetch';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import Plan from "./model/Plan.js"; // Assuming Plan model exists
 
-const API = "http://localhost:4000/api/plans";
+dotenv.config();
 
 const plans = [
-    { name: "Daily Starter", price: 520, daily: 120, days: 47, type: "buy", isVip: false },
-    { name: "Daily Saver", price: 960, daily: 210, days: 85, type: "buy", isVip: false },
-    { name: "VIP Silver", price: 47800, daily: 19920, days: 130, type: "buy", isVip: true }
+    {
+        name: "Red Bull Starter",
+        price: 500,
+        daily: 20,
+        days: 30,
+        isVip: false,
+        type: "basic",
+        image: "assets/images/plan1.jpg"
+    },
+    {
+        name: "Red Bull Pro",
+        price: 2000,
+        daily: 100,
+        days: 45,
+        isVip: false,
+        type: "basic",
+        image: "assets/images/plan2.jpg"
+    },
+    {
+        name: "Red Bull VIP 1",
+        price: 5000,
+        daily: 300,
+        days: 15,
+        isVip: true,
+        type: "basic",
+        image: "assets/images/plan3.jpg"
+    },
+    {
+        name: "Flash Sale Plan",
+        price: 1000,
+        daily: 50,
+        days: 10,
+        isVip: false,
+        type: "timer",
+        timerHours: 24,
+        image: "assets/images/plan4.jpg"
+    }
 ];
 
-async function seed() {
-    for (const p of plans) {
-        try {
-            const res = await fetch(API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(p)
-            });
-            const data = await res.json();
-            console.log(`Seeded ${p.name}:`, data.success);
-        } catch (e) {
-            console.error(`Failed to seed ${p.name}:`, e.message);
-        }
-    }
-}
+const seedPlans = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log("✅ Connected to DB");
 
-seed();
+        await Plan.deleteMany({});
+        console.log("Cleared existing plans");
+
+        await Plan.insertMany(plans);
+        console.log(`✅ Seeded ${plans.length} plans`);
+
+        await mongoose.disconnect();
+        console.log("Disconnected");
+    } catch (err) {
+        console.error("❌ Seeding failed:", err);
+    }
+};
+
+seedPlans();

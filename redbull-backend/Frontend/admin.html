@@ -356,6 +356,60 @@
         opacity: 1;
       }
     }
+
+    /* Modal Styles */
+    .modal-bg {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      transition: opacity 0.3s;
+    }
+
+    .modal {
+      background: #ffffff;
+      padding: 32px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: center;
+    }
+
+    @keyframes modalSlideUp {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .modal-footer {
+      margin-top: 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
   </style>
 </head>
 
@@ -532,12 +586,33 @@
   <div id="editPlanModal" class="modal-bg"
     style="display: none; position: fixed; inset: 0; z-index: 2000; align-items: center; justify-content: center;">
     <div class="modal">
-      <h3>Edit Plan Name</h3>
-      <input type="text" id="editPlanInput" class="form-control" placeholder="New Plan Name"
-        style="margin-bottom: 16px;">
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button id="editPlanCancel" class="btn-sm btn-danger">Cancel</button>
-        <button id="editPlanConfirm" class="btn-sm btn-primary">Save</button>
+      <h3>Edit Plan Details</h3>
+
+      <div class="form-group" style="margin-bottom:20px;">
+        <label>Plan Name</label>
+        <input type="text" id="editPlanName" class="form-control" placeholder="e.g. Premium Plan">
+      </div>
+
+      <div class="modal-grid">
+        <div class="form-group">
+          <label>Price (₹)</label>
+          <input type="number" id="editPlanPrice" class="form-control" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Daily Income (₹)</label>
+          <input type="number" id="editPlanDaily" class="form-control" placeholder="0">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:16px;">
+        <label>Duration (Days)</label>
+        <input type="number" id="editPlanDays" class="form-control" placeholder="30">
+        <small style="color:#94a3b8; font-size:11px;">Set to 0 for Timer based plans</small>
+      </div>
+
+      <div class="modal-footer">
+        <button id="editPlanCancel" class="btn-sm btn-danger" style="padding: 8px 20px;">Cancel</button>
+        <button id="editPlanConfirm" class="btn-sm btn-primary" style="padding: 8px 20px;">Save Changes</button>
       </div>
     </div>
   </div>
@@ -686,6 +761,8 @@
     }
 
     // --- Plans ---
+    let allPlans = [];
+
     async function loadPlans() {
       try {
         const res = await fetch(`${API}/plans?t=${Date.now()}`, { cache: "no-store" });
@@ -695,6 +772,7 @@
         document.getElementById("totalPlans").innerText = data.plans?.length || 0;
 
         if (data.success) {
+          allPlans = data.plans || [];
           data.plans.forEach(p => {
             const div = document.createElement("div");
             div.className = "card";
@@ -763,16 +841,25 @@
       });
     }
 
-    function openEditPlanModal(currentName) {
+    function openEditPlanModal(plan) {
       return new Promise((resolve) => {
         const modal = document.getElementById("editPlanModal");
-        const input = document.getElementById("editPlanInput");
+        const nameInput = document.getElementById("editPlanName");
+        const priceInput = document.getElementById("editPlanPrice");
+        const dailyInput = document.getElementById("editPlanDaily");
+        const daysInput = document.getElementById("editPlanDays");
+
         const confirmBtn = document.getElementById("editPlanConfirm");
         const cancelBtn = document.getElementById("editPlanCancel");
 
-        input.value = ""; // currentName is not passed in old code, but we could if we had it.
+        // Pre-fill values
+        nameInput.value = plan.name || "";
+        priceInput.value = plan.price || "";
+        dailyInput.value = plan.daily || "";
+        daysInput.value = plan.days || "";
+
         modal.style.display = "flex";
-        input.focus();
+        nameInput.focus();
 
         const cleanup = () => {
           modal.style.display = "none";
@@ -781,12 +868,16 @@
         };
 
         confirmBtn.onclick = () => {
-          const val = input.value.trim();
-          if (val) {
+          const name = nameInput.value.trim();
+          const price = Number(priceInput.value);
+          const daily = Number(dailyInput.value);
+          const days = Number(daysInput.value);
+
+          if (name && price >= 0) {
             cleanup();
-            resolve(val);
+            resolve({ name, price, daily, days });
           } else {
-            alert("Please enter a name");
+            alert("Please enter valid details");
           }
         };
 
@@ -841,10 +932,13 @@
     };
 
     async function editPlan(id) {
-      const newName = await openEditPlanModal();
-      if (!newName) return;
+      const plan = allPlans.find(p => p._id === id);
+      if (!plan) return;
 
-      const res = await fetch(`${API}/plans/${id}`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ name: newName }) });
+      const newValues = await openEditPlanModal(plan);
+      if (!newValues) return;
+
+      const res = await fetch(`${API}/plans/${id}`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(newValues) });
       const data = await res.json();
       toast(data.success ? "Plan Updated" : data.message);
       if (data.success) loadPlans();

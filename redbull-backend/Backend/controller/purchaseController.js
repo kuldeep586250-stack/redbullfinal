@@ -4,11 +4,17 @@ import Transaction from "../model/Transaction.js";
 
 export const buyPlan = async (req, res) => {
     try {
-        const { planId, price, name, daily, days } = req.body;
+        const { planId } = req.body; // Only need planId from body
         const userId = req.user._id;
 
         const user = await User.findById(userId);
         if (!user) return res.json({ success: false, message: "User not found" });
+
+        // Fetch Plan from DB
+        const plan = await Plan.findById(planId);
+        if (!plan) return res.json({ success: false, message: "Plan not found" });
+
+        const { price, name, daily, days } = plan;
 
         if (user.wallet < price) {
             return res.json({ success: false, message: "Insufficient balance" });
@@ -52,7 +58,7 @@ export const buyPlan = async (req, res) => {
 
         // --- ADD PLAN ---
         const newPlan = {
-            planId,
+            planId: plan._id,
             name,
             price,
             daily,

@@ -33,7 +33,18 @@ export const createPlan = async (req, res) => {
 
     if (!name) return res.json({ success: false, message: "Plan name required" });
 
-    const img = randomImages[Math.floor(Math.random() * randomImages.length)];
+    const count = await Plan.countDocuments();
+    const headers = [
+      "Frontend/assets/images/plan1.jpg",
+      "Frontend/assets/images/plan2.jpg",
+      "Frontend/assets/images/plan3.jpg",
+      "Frontend/assets/images/plan4.jpg",
+      "Frontend/assets/images/ma.jpg",
+      "Frontend/assets/images/mp.jpg",
+      "Frontend/assets/images/re.jpg",
+      "Frontend/assets/images/sa.jpg"
+    ];
+    const img = headers[count % headers.length];
 
     const plan = await Plan.create({
       name,
