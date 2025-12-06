@@ -264,7 +264,14 @@
   </nav>
 
   <script>
-    const API_BASE = "http://localhost:4000";
+    // Dynamic API Base URL logic
+    const API_BASE = (function () {
+      const host = location.hostname;
+      if (host === "localhost" || host === "127.0.0.1") {
+        return "http://localhost:4000";
+      }
+      return ""; // Relative path
+    })();
 
     // Store data for all 3 levels
     let teamData = {

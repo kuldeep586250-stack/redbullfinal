@@ -420,15 +420,24 @@
 
     let selectedPlan = null;
 
+    // Dynamic API Base URL logic
+    const API_BASE_URL = (function () {
+      const host = location.hostname;
+      if (host === "localhost" || host === "127.0.0.1") {
+        return "http://localhost:4000";
+      }
+      return ""; // Relative path
+    })();
+
     async function loadPlansForRecharge() {
-      const res = await fetch("http://localhost:4000/api/plans");
+      const res = await fetch(`${API_BASE_URL}/api/plans`);
       const data = await res.json();
       const plans = data.plans || [];
       // SELECT RECHARGE PLANS (non-vip buy plans)
       return plans.filter((p) => p.type === "buy" && !p.isVip);
     }
 
-    const API_URL = "http://localhost:4000/api/payment/request";
+    const API_URL = `${API_BASE_URL}/api/payment/request`;
 
     /* ------------ WALLET DISPLAY ------------ */
     function loadWalletAmount() {

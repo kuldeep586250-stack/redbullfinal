@@ -293,9 +293,17 @@
   <script>
     const $ = (id) => document.getElementById(id);
 
-    /* FIXED API URLS */
-    const AUTH_API = "http://localhost:4000/api/auth";
-    const PASS_API = "http://localhost:4000/api/password";
+    /* FIXED API URLS - DYNAMIC */
+    const API_BASE = (function () {
+      const host = location.hostname;
+      if (host === "localhost" || host === "127.0.0.1") {
+        return "http://localhost:4000/api";
+      }
+      return "/api";
+    })();
+
+    const AUTH_API = `${API_BASE}/auth`;
+    const PASS_API = `${API_BASE}/password`;
 
     /* TABS */
     const slider = $("formSlider");
